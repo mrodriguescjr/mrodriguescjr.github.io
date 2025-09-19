@@ -195,7 +195,16 @@ footer button:hover{
 }
 
 @media (max-width:900px){
-  header nav{flex-direction:column; gap:8px; margin-top:0;}
-  .intro{max-width:100%;}
-  .hero{width:calc(100% - 2*var(--section-margin));}
+  header nav{
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 0;
+    align-items: flex-end; /* previously center, now right-aligned */
+  }
+  .intro{
+    max-width:100%;
+  }
+  .hero{
+    width: calc(100% - 2*var(--section-margin));
+  }
 }
