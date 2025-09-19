@@ -5,7 +5,7 @@ const RAMP = " .'`^\",:;Il!i~+_-?][}{1)(|\\\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW
 
 let frames = [];
 let currentFrameIndex = 0;
-const totalFrames = 390; // frame_001 to frame_390
+const totalFrames = 480; // frame_001 to frame_480
 const frameRate = 82; // ms per frame
 
 function clamp(v,a,b){ return Math.max(a, Math.min(b,v)); }
