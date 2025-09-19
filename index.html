@@ -3,125 +3,218 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Marcelo Rodrigues Portfolio</title>
+<title>ASCII Portfolio</title>
 <style>
-  :root {
-    --fg: #0f0; /* ASCII color */
-  }
+:root{
+  --bg:#0b0b0d;
+  --fg:#e6eef8;
+  --muted:#9aa7b8;
+  --primary:#78c7ff;
+  --section-margin:20px;
+}
 
-  body {
-    margin:0;
-    font-family: Arial, sans-serif;
-    background: #111;
-    color: #ccc;
-    overflow-y: auto;
-    padding-top: 70px; /* offset header */
-  }
+* { box-sizing:border-box; }
 
-  header {
-    position: fixed;
-    top:0;
-    left:0;
-    width:100%;
-    background:#111;
-    display:flex;
-    justify-content:flex-end;
-    gap:10px;
-    padding:20px;
-    z-index:10;
-  }
+html, body {
+  margin:0;
+  padding:0;
+  width:100%;
+  min-height:100%;
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  overflow-y:auto;
+}
 
-  header button {
-    background:none;
-    border:none;
-    color:#ccc;
-    cursor:pointer;
-    text-transform:uppercase;
-    font-size:16px;
-  }
+header.site-header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px var(--section-margin);
+  background:var(--bg);
+  font-size:16px;
+  z-index:10;
+}
 
-  header button:hover {
-    text-decoration: underline;
-  }
+header .symbols {
+  color: var(--fg);
+  font-size:18px;
+}
 
-  .hero {
-    margin:20px auto;
-    display:flex;
-    justify-content:center;
-    width: calc(100% - 40px);
-    height: auto;
-  }
+header nav{
+  display:flex;
+  gap:16px;
+}
 
-  pre.ascii {
-    margin:0;
-    padding:0;
-    width:100%;
-    height:100%;
-    white-space: pre;
-    font-family: "Courier New", monospace;
-    color: var(--fg);
-    line-height:1;
-    user-select:none;
-    pointer-events:none;
-    border-radius:4px;
-  }
+header nav button{
+  font-family: Arial, sans-serif;
+  background:transparent;
+  border:none; 
+  color: var(--fg);
+  font-size:16px;
+  cursor:pointer;
+  padding:6px 10px;
+  border-radius:6px;
+  transition: all 0.2s ease;
+  outline:none;
+}
 
-  section {
-    margin:20px;
-    max-width:calc(100% - 40px);
-  }
+header nav button:hover{
+  text-decoration: underline;
+  background: none;
+}
 
-  .section-title {
-    font-size:18px;
-    text-transform: uppercase;
-    margin-bottom:10px;
-    text-align:left;
-  }
+.hero {
+  width:calc(100% - 2*var(--section-margin));
+  margin:20px var(--section-margin);
+  display:flex;
+  align-items:flex-start;
+  justify-content:flex-start;
+  overflow:hidden;
+  background:black;
+  border-radius:4px;
+}
 
-  .about-text {
-    font-size:16px;
-    max-width:50%;
-    color:#ccc;
-    margin-top:5px;
-  }
+pre.ascii {
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  white-space:pre;
+  font-family: "Courier New", monospace;
+  color: var(--fg);
+  line-height:1;
+  user-select:none;
+  pointer-events:none;
+  border-radius:4px;
+}
 
-  .projects-list {
-    margin-top:20px;
-  }
+.content {
+  display:flex;
+  flex-direction:column;
+  padding: var(--section-margin);
+  width:100%;
+  gap: var(--section-margin);
+}
 
-  .projects-list div {
-    display:flex;
-    justify-content:space-between;
-    font-size:14px;
-    line-height:48px;
-    border-bottom:1px solid #555;
-    padding-left:5px;
-  }
+h2.section-title{
+  font-size:14px;
+  text-transform: uppercase;
+  letter-spacing:1px;
+  margin-bottom:0; /* remove margin to bring title and text closer */
+  color: var(--muted);
+}
 
-  footer {
-    display:flex;
-    gap:10px;
-    padding:20px;
-    justify-content:flex-start;
-    margin:20px;
-  }
+.intro{
+  font-size:16px;
+  line-height:1.5;
+  max-width:50vw;
+  color: var(--muted);
+  margin-top:4px; /* tiny space to separate slightly from title */
+}
 
-  footer button {
-    background:none;
-    border:none;
-    color:#ccc;
-    cursor:pointer;
-    font-size:14px;
-    text-transform:uppercase;
-  }
+.projects-index{
+  display:flex;
+  flex-direction:column;
+  width:100%;
+  gap:0;
+}
 
+.projects-index h2{
+  font-size:14px;
+  text-transform: uppercase;
+  letter-spacing:1px;
+  margin-bottom:16px;
+  color: var(--muted);
+}
+
+.project-item{
+  display:flex;
+  align-items:center;
+  height:48px;
+  cursor:pointer;
+  transition: color 0.2s ease;
+  border-bottom:1px solid var(--muted);
+  padding:0 0 8px 0;
+  opacity:0;
+  animation: fadeInItem 0.5s forwards;
+}
+
+.project-item:hover h3{
+  color: var(--primary);
+}
+
+@keyframes fadeInItem {
+  from { opacity:0; }
+  to { opacity:1; }
+}
+
+.project-item span.number{
+  display:inline-block;
+  width:2rem;
+  color: var(--muted);
+  margin-right:6px;
+  font-size:14px;
+}
+
+.project-item h3{
+  margin:0;
+  font-weight:normal;
+  font-size:14px;
+}
+
+.project-item .meta{
+  margin-left:auto;
+  display:flex;
+  gap:12px;
+  color: var(--muted);
+  font-size:14px;
+}
+
+footer{
+  display:flex;
+  justify-content:flex-start;
+  align-items:center;
+  padding:10px var(--section-margin);
+  gap:10px;
+}
+
+footer button{
+  font-family: Arial, sans-serif;
+  background:transparent;
+  border:none; 
+  color: var(--fg);
+  font-size:14px;
+  cursor:pointer;
+  padding:4px 8px;
+  border-radius:6px;
+  transition: all 0.2s ease;
+}
+
+footer button:hover{
+  text-decoration: underline;
+  background: none;
+}
+
+@media (max-width:900px){
+  header nav{flex-direction:column; gap:8px; margin-top:0;}
+  .intro{max-width:100%;}
+  .hero{width:calc(100% - 2*var(--section-margin));}
+}
 </style>
 </head>
 <body>
 
-<header>
-  <button>About</button>
-  <button>Contact</button>
+<header class="site-header">
+  <span class="symbols">░ ▒ ▓ █</span>
+  <nav>
+    <button>About</button>
+    <button>Contact</button>
+  </nav>
 </header>
 
 <div class="hero" id="hero">
@@ -129,26 +222,41 @@
   <canvas id="offscreen" style="display:none"></canvas>
 </div>
 
-<section id="about-section">
+<div class="content">
   <h2 class="section-title">Hi, my name is Marcelo Rodrigues</h2>
-  <p class="about-text">
-    I have been working as a Designer for over 10 years, helping companies transform ideas into user-centered experiences. Throughout my career, I have specialized in structuring flows, leading projects, and developing functional, visually appealing, and responsive interfaces.
-  </p>
-</section>
+  <div class="intro">
+    <p>I have been working as a Designer for over 10 years, helping companies transform ideas into user-centered experiences. Throughout my career, I have specialized in structuring flows, leading projects, and developing functional, visually appealing, and responsive interfaces.</p>
+  </div>
 
-<section class="projects-list">
-  <h2 class="section-title">Selected Works</h2>
-  <div><span>01</span> <span>Digital Identity System</span> <span>2024</span></div>
-  <div><span>02</span> <span>Minimalist Web App</span> <span>2024</span></div>
-  <div><span>03</span> <span>Motion Graphics Reel</span> <span>2023</span></div>
-  <div><span>04</span> <span>Publication Design</span> <span>2023</span></div>
-  <div><span>05</span> <span>E-commerce Platform</span> <span>2023</span></div>
-</section>
+  <aside class="projects-index">
+    <h2>Selected Works</h2>
+    <div class="project-item">
+      <span class="number">01</span><h3>Digital Identity System</h3>
+      <div class="meta"><span>Branding</span><span>2024</span></div>
+    </div>
+    <div class="project-item">
+      <span class="number">02</span><h3>Minimalist Web App</h3>
+      <div class="meta"><span>UI/UX</span><span>2024</span></div>
+    </div>
+    <div class="project-item">
+      <span class="number">03</span><h3>Motion Graphics Reel</h3>
+      <div class="meta"><span>Animation</span><span>2023</span></div>
+    </div>
+    <div class="project-item">
+      <span class="number">04</span><h3>Publication Design</h3>
+      <div class="meta"><span>Print</span><span>2023</span></div>
+    </div>
+    <div class="project-item">
+      <span class="number">05</span><h3>E-commerce Platform</h3>
+      <div class="meta"><span>Development</span><span>2023</span></div>
+    </div>
+  </aside>
 
-<footer>
-  <button>LinkedIn</button>
-  <button>Instagram</button>
-</footer>
+  <footer>
+    <button>LinkedIn</button>
+    <button>Instagram</button>
+  </footer>
+</div>
 
 <script>
 const hero = document.getElementById('hero');
@@ -160,61 +268,55 @@ const RAMP = " .'`^\",:;Il!i~+_-?][}{1)(|\\\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW
 let frames = [];
 let currentFrameIndex = 0;
 
-// Load frames from frame_192.png to frame_290.png
-const firstFrame = 192;
-const lastFrame = 290;
+function clamp(v,a,b){ return Math.max(a, Math.min(b,v)); }
 
-for (let i = firstFrame; i <= lastFrame; i++) {
-  const img = new Image();
-  img.src = `frames/frame_${i}.png`; 
-  frames.push(img);
-}
-
-Promise.all(frames.map(img => new Promise(res => img.onload = res)))
-  .then(() => {
-    resizeCanvas();
-    renderFrame(0);
-    setInterval(advanceFrame, 150);
-  });
-
-function resizeCanvas() {
-  const margin = 20;
-  const maxWidth = window.innerWidth - 2 * margin;
-  const maxHeight = window.innerHeight * 0.6;
-
-  const aspect = 16/9;
-  let canvasWidth = maxWidth;
-  let canvasHeight = canvasWidth / aspect;
-  if(canvasHeight > maxHeight){
-    canvasHeight = maxHeight;
-    canvasWidth = canvasHeight * aspect;
+function generateSyntheticFrames(count = 20){
+  const tmp = document.createElement('canvas');
+  tmp.width = 480; tmp.height = 270;
+  const tctx = tmp.getContext('2d');
+  const arr = [];
+  for(let i=0;i<count;i++){
+    const g = tctx.createLinearGradient(0,0,tmp.width,tmp.height);
+    g.addColorStop(0, `hsl(${(i/count)*50},65%,14%)`);
+    g.addColorStop(1, `hsl(${(i/count)*260},65%,12%)`);
+    tctx.fillStyle = g;
+    tctx.fillRect(0,0,tmp.width,tmp.height);
+    const img = new Image();
+    img.src = tmp.toDataURL();
+    arr.push(img);
   }
-
-  hero.style.width = canvasWidth + "px";
-  hero.style.height = canvasHeight + "px";
-  hero.style.margin = margin + "px auto";
-
-  const charRatio = 0.6;
-  const cols = Math.floor(canvasWidth / 7);
-  const rows = Math.floor(canvasHeight / (7/charRatio));
-  off.width = cols;
-  off.height = rows;
-
-  const fontSize = Math.max(18, canvasHeight / rows);
-  asciiEl.style.fontSize = fontSize + "px";
-  asciiEl.style.lineHeight = fontSize + "px"; // keep line-height consistent
-  asciiEl.style.borderRadius = "4px";
+  return arr;
 }
 
-function imageToASCII(img) {
-  if (!img || !img.complete) return null;
+frames = generateSyntheticFrames();
+
+function computeOutputSize() {
+    const margin = 20;
+    const W = window.innerWidth - 2*margin;
+    const H = window.innerHeight * 0.6;
+    hero.style.width = W + "px";
+    hero.style.height = H + "px";
+    hero.style.margin = margin + "px auto";
+
+    const charRatio = 0.6;
+    const cols = Math.floor(W / 7);
+    const rows = Math.floor(H / (7 / charRatio));
+    off.width = cols;
+    off.height = rows;
+    const fontSize = Math.max(18, H / rows);
+    asciiEl.style.fontSize = fontSize + "px";
+    asciiEl.style.lineHeight = fontSize * 0.95 + "px";
+}
+
+function imageToASCII(img){
+  if(!img || !img.complete) return null;
   ctx.clearRect(0,0,off.width,off.height);
   ctx.drawImage(img,0,0,off.width,off.height);
   const data = ctx.getImageData(0,0,off.width,off.height).data;
-  let out = "";
+  let out="";
   for(let y=0;y<off.height;y++){
     for(let x=0;x<off.width;x++){
-      const i=(y*off.width+x)*4;
+      const i = (y*off.width + x)*4;
       const v = 0.299*data[i]+0.587*data[i+1]+0.114*data[i+2];
       const ci = Math.floor((v/255)*(RAMP.length-1));
       out += RAMP[ci];
@@ -225,21 +327,32 @@ function imageToASCII(img) {
 }
 
 function renderFrame(idx){
-  idx = Math.max(0,Math.min(idx,frames.length-1));
+  idx = clamp(idx,0,frames.length-1);
   const ascii = imageToASCII(frames[idx]);
   if(ascii !== null) asciiEl.textContent = ascii;
 }
 
 function advanceFrame(){
-  currentFrameIndex = (currentFrameIndex+1)%frames.length;
+  currentFrameIndex = (currentFrameIndex + 1) % frames.length;
   renderFrame(currentFrameIndex);
 }
 
-window.addEventListener('resize', ()=>{
-  resizeCanvas();
-  renderFrame(currentFrameIndex);
+document.addEventListener('mousemove', advanceFrame);
+document.addEventListener('touchmove', advanceFrame, {passive:true});
+
+if('maxTouchPoints' in navigator && navigator.maxTouchPoints > 0){
+  setInterval(advanceFrame, 200);
+}
+
+window.addEventListener('resize',()=>{ computeOutputSize(); renderFrame(currentFrameIndex); });
+computeOutputSize();
+renderFrame(0);
+
+// staggered fade-in for projects
+const projectItems = document.querySelectorAll('.project-item');
+projectItems.forEach((item,i)=>{
+  item.style.animationDelay = `${i*0.15}s`;
 });
 </script>
-
 </body>
 </html>
