@@ -6,7 +6,7 @@ const RAMP = " .'`^\",:;Il!i~+_-?][}{1)(|\\\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW
 let frames = [];
 let currentFrameIndex = 0;
 const totalFrames = 480; // frame_001 to frame_480
-const frameRate = 164; // updated frame rate ms per frame
+const frameRate = 82; // updated frame rate ms per frame
 
 function clamp(v,a,b){ return Math.max(a, Math.min(b,v)); }
 
@@ -19,7 +19,7 @@ function computeOutputSize() {
   off.height = Math.floor(H / 6);
 
   asciiEl.style.fontSize = "8px"; // fixed typo "8x" -> "8px"
-  asciiEl.style.lineHeight = "8px";
+  asciiEl.style.lineHeight = "12px";
 
   return {W,H};
 }
