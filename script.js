@@ -18,8 +18,8 @@ function computeOutputSize() {
   off.width = Math.floor(W / 4);
   off.height = Math.floor(H / 6);
 
-  asciiEl.style.fontSize = "8px"; // fixed typo "8x" -> "8px"
-  asciiEl.style.lineHeight = "12px";
+  asciiEl.style.fontSize = "10px"; // fixed typo "8x" -> "8px"
+  asciiEl.style.lineHeight = "8px";
 
   return {W,H};
 }
