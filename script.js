@@ -13,12 +13,12 @@ function clamp(v,a,b){ return Math.max(a, Math.min(b,v)); }
 function computeOutputSize() {
   const margin = 20;
   const W = window.innerWidth - 2*margin;
-  const H = window.innerHeight * 0.6;
+  const H = window.innerHeight * 0.4;
 
   off.width = Math.floor(W / 4);
   off.height = Math.floor(H / 6);
 
-  asciiEl.style.fontSize = "12px";
+  asciiEl.style.fontSize = "8x";
   asciiEl.style.lineHeight = "8px";
 
   return {W,H};
