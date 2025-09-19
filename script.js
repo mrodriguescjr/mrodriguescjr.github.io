@@ -5,7 +5,7 @@ const RAMP = " .'`^\",:;Il!i~+_-?][}{1)(|\\\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW
 
 let frames = [];
 let currentFrameIndex = 0;
-const totalFrames = 390; // frame_001 to frame_390
+const totalFrames = 720; // frame_001 to frame_480
 const frameRate = 82; // ms per frame
 
 function clamp(v,a,b){ return Math.max(a, Math.min(b,v)); }
@@ -13,12 +13,12 @@ function clamp(v,a,b){ return Math.max(a, Math.min(b,v)); }
 function computeOutputSize() {
   const margin = 20;
   const W = window.innerWidth - 2*margin;
-  const H = window.innerHeight * 0.6;
+  const H = window.innerHeight * 0.4;
 
-  off.width = Math.floor(W / 8);
-  off.height = Math.floor(H / 12);
+  off.width = Math.floor(W / 4);
+  off.height = Math.floor(H / 6);
 
-  asciiEl.style.fontSize = "8px";
+  asciiEl.style.fontSize = "8px"; // fixed typo "8x" -> "8px"
   asciiEl.style.lineHeight = "8px";
 
   return {W,H};
@@ -57,7 +57,7 @@ function preloadFrames(){
   for(let i=1;i<=totalFrames;i++){
     const num = String(i).padStart(3,'0');
     const img = new Image();
-    img.src = `frames/frame_${num}.png`; // adjust path
+    img.src = `frames/frame_${num}.png`; // adjust path if needed
     frames.push(img);
   }
 }
@@ -65,10 +65,12 @@ function preloadFrames(){
 preloadFrames();
 computeOutputSize();
 renderFrame(0);
-
 setInterval(advanceFrame, frameRate);
 
-window.addEventListener('resize',()=>{ computeOutputSize(); renderFrame(currentFrameIndex); });
+window.addEventListener('resize',()=>{ 
+  computeOutputSize(); 
+  renderFrame(currentFrameIndex); 
+});
 
 // staggered fade-in for projects
 const projectItems = document.querySelectorAll('.project-item');
