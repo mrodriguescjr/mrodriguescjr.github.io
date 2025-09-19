@@ -18,7 +18,7 @@ function computeOutputSize() {
   off.width = Math.floor(W / 4);
   off.height = Math.floor(H / 6);
 
-  asciiEl.style.fontSize = "8px";
+  asciiEl.style.fontSize = "12px";
   asciiEl.style.lineHeight = "8px";
 
   return {W,H};
