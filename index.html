@@ -105,7 +105,7 @@ h2.section-title{
   font-size:14px;
   text-transform: uppercase;
   letter-spacing:1px;
-  margin-bottom:0; /* remove margin to bring title and text closer */
+  margin-bottom:0;
   color: var(--muted);
 }
 
@@ -114,7 +114,7 @@ h2.section-title{
   line-height:1.5;
   max-width:50vw;
   color: var(--muted);
-  margin-top:4px; /* tiny space to separate slightly from title */
+  margin-top:4px;
 }
 
 .projects-index{
@@ -270,25 +270,21 @@ let currentFrameIndex = 0;
 
 function clamp(v,a,b){ return Math.max(a, Math.min(b,v)); }
 
-function generateSyntheticFrames(count = 20){
-  const tmp = document.createElement('canvas');
-  tmp.width = 480; tmp.height = 270;
-  const tctx = tmp.getContext('2d');
-  const arr = [];
-  for(let i=0;i<count;i++){
-    const g = tctx.createLinearGradient(0,0,tmp.width,tmp.height);
-    g.addColorStop(0, `hsl(${(i/count)*50},65%,14%)`);
-    g.addColorStop(1, `hsl(${(i/count)*260},65%,12%)`);
-    tctx.fillStyle = g;
-    tctx.fillRect(0,0,tmp.width,tmp.height);
-    const img = new Image();
-    img.src = tmp.toDataURL();
-    arr.push(img);
-  }
-  return arr;
+const firstFrame = 192;
+const lastFrame = 290;
+
+// Load uploaded frames
+for(let i = firstFrame; i <= lastFrame; i++){
+  const img = new Image();
+  img.src = `frames/frame_${i}.png`; // make sure "frames" folder is next to index.html
+  frames.push(img);
 }
 
-frames = generateSyntheticFrames();
+Promise.all(frames.map(img => new Promise(res => img.onload = res)))
+  .then(() => {
+    computeOutputSize();
+    renderFrame(0);
+  });
 
 function computeOutputSize() {
     const margin = 20;
@@ -332,6 +328,7 @@ function renderFrame(idx){
   if(ascii !== null) asciiEl.textContent = ascii;
 }
 
+// Mouse & touch interaction = frame change
 function advanceFrame(){
   currentFrameIndex = (currentFrameIndex + 1) % frames.length;
   renderFrame(currentFrameIndex);
@@ -340,13 +337,7 @@ function advanceFrame(){
 document.addEventListener('mousemove', advanceFrame);
 document.addEventListener('touchmove', advanceFrame, {passive:true});
 
-if('maxTouchPoints' in navigator && navigator.maxTouchPoints > 0){
-  setInterval(advanceFrame, 200);
-}
-
 window.addEventListener('resize',()=>{ computeOutputSize(); renderFrame(currentFrameIndex); });
-computeOutputSize();
-renderFrame(0);
 
 // staggered fade-in for projects
 const projectItems = document.querySelectorAll('.project-item');
