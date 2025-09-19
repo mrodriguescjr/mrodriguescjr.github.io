@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marcelo Rodrigues Portfolio</title>
+<style>
+  body {
+    margin:0;
+    font-family: Arial, sans-serif;
+    background: #111;
+    color: #ccc;
+    overflow-y: auto;
+  }
+
+  header {
+    position: fixed;
+    top:0;
+    width:100%;
+    background:#111;
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    padding:20px;
+    z-index:10;
+  }
+
+  header button {
+    background:none;
+    border:none;
+    color:#ccc;
+    cursor:pointer;
+    text-transform:uppercase;
+    font-size:16px;
+  }
+
+  header button:hover {
+    text-decoration: underline;
+  }
+
+  .hero {
+    margin:20px auto;
+    display:flex;
+    justify-content:center;
+  }
+
+  .ascii {
+    white-space: pre;
+    font-family: monospace;
+    line-height: 1;
+    border-radius:4px;
+    color:#0f0;
+  }
+
+  section {
+    margin:20px;
+    max-width:calc(100% - 40px);
+  }
+
+  .section-title {
+    font-size:18px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .about-text {
+    font-size:16px;
+    max-width:50%;
+    color:#ccc;
+  }
+
+  .projects-list {
+    margin-top:20px;
+  }
+
+  .projects-list div {
+    display:flex;
+    justify-content:space-between;
+    font-size:14px;
+    line-height:48px;
+    border-bottom:1px solid #555;
+    padding:0 0 0 5px;
+  }
+
+  footer {
+    display:flex;
+    gap:10px;
+    padding:20px;
+    justify-content:flex-start;
+  }
+
+  footer button {
+    background:none;
+    border:none;
+    color:#ccc;
+    cursor:pointer;
+    font-size:14px;
+    text-transform:uppercase;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <button>About</button>
+  <button>Contact</button>
+</header>
+
+<div class="hero" id="hero">
+  <pre class="ascii" id="ascii">Loading ASCII...</pre>
+  <canvas id="offscreen" style="display:none"></canvas>
+</div>
+
+<section id="about-section">
+  <h2 class="section-title">Hi, my name is Marcelo Rodrigues</h2>
+  <p class="about-text">
+    I have been working as a Designer for over 10 years, helping companies transform ideas into user-centered experiences. Throughout my career, I have specialized in structuring flows, leading projects, and developing functional, visually appealing, and responsive interfaces.
+  </p>
+</section>
+
+<section class="projects-list">
+  <h2 class="section-title">Selected Works</h2>
+  <div><span>01</span> <span>Digital Identity System</span> <span>2024</span></div>
+  <div><span>02</span> <span>Minimalist Web App</span> <span>2024</span></div>
+  <div><span>03</span> <span>Motion Graphics Reel</span> <span>2023</span></div>
+  <div><span>04</span> <span>Publication Design</span> <span>2023</span></div>
+  <div><span>05</span> <span>E-commerce Platform</span> <span>2023</span></div>
+</section>
+
+<footer>
+  <button>LinkedIn</button>
+  <button>Instagram</button>
+</footer>
+
+<script>
+const hero = document.getElementById('hero');
+const asciiEl = document.getElementById('ascii');
+const off = document.getElementById('offscreen');
+const ctx = off.getContext('2d');
+const RAMP = " .'`^\",:;Il!i~+_-?][}{1)(|\\\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
+
+let frames = [];
+let currentFrameIndex = 0;
+
+// Load frames from frame_192.png to frame_290.png
+const firstFrame = 192;
+const lastFrame = 290;
+
+for (let i = firstFrame; i <= lastFrame; i++) {
+  const img = new Image();
+  img.src = `frames/frame_${i}.png`; 
+  frames.push(img);
+}
+
+Promise.all(frames.map(img => new Promise(res => img.onload = res)))
+  .then(() => {
+    resizeCanvas();
+    renderFrame(0);
+    setInterval(advanceFrame, 150);
+  });
+
+function resizeCanvas() {
+  const margin = 20;
+  const maxWidth = window.innerWidth - 2 * margin;
+  const maxHeight = window.innerHeight * 0.6;
+
+  const aspect = 16/9;
+  let canvasWidth = maxWidth;
+  let canvasHeight = canvasWidth / aspect;
+  if(canvasHeight > maxHeight){
+    canvasHeight = maxHeight;
+    canvasWidth = canvasHeight * aspect;
+  }
+
+  hero.style.width = canvasWidth + "px";
+  hero.style.height = canvasHeight + "px";
+  hero.style.margin = margin + "px auto";
+
+  const charRatio = 0.6;
+  const cols = Math.floor(canvasWidth / 7);
+  const rows = Math.floor(canvasHeight / (7/charRatio));
+  off.width = cols;
+  off.height = rows;
+
+  const fontSize = Math.max(18, canvasHeight / rows);
+  asciiEl.style.fontSize = fontSize + "px";
+  asciiEl.style.lineHeight = fontSize*0.95 + "px";
+  asciiEl.style.borderRadius = "4px";
+}
+
+function imageToASCII(img) {
+  if (!img || !img.complete) return null;
+  ctx.clearRect(0,0,off.width,off.height);
+  ctx.drawImage(img,0,0,off.width,off.height);
+  const data = ctx.getImageData(0,0,off.width,off.height).data;
+  let out = "";
+  for(let y=0;y<off.height;y++){
+    for(let x=0;x<off.width;x++){
+      const i=(y*off.width+x)*4;
+      const v = 0.299*data[i]+0.587*data[i+1]+0.114*data[i+2];
+      const ci = Math.floor((v/255)*(RAMP.length-1));
+      out += RAMP[ci];
+    }
+    out += "\n";
+  }
+  return out;
+}
+
+function renderFrame(idx){
+  idx = Math.max(0,Math.min(idx,frames.length-1));
+  const ascii = imageToASCII(frames[idx]);
+  if(ascii !== null) asciiEl.textContent = ascii;
+}
+
+function advanceFrame(){
+  currentFrameIndex = (currentFrameIndex+1)%frames.length;
+  renderFrame(currentFrameIndex);
+}
+
+window.addEventListener('resize', ()=>{
+  resizeCanvas();
+  renderFrame(currentFrameIndex);
+});
+</script>
+
+</body>
+</html>
