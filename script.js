@@ -15,8 +15,8 @@ function computeOutputSize() {
   const W = window.innerWidth - 2*margin;
   const H = window.innerHeight * 0.6;
 
-  off.width = Math.floor(W / 8);
-  off.height = Math.floor(H / 12);
+  off.width = Math.floor(W / 4);
+  off.height = Math.floor(H / 6);
 
   asciiEl.style.fontSize = "8px";
   asciiEl.style.lineHeight = "8px";
