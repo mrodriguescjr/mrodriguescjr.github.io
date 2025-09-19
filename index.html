@@ -65,18 +65,17 @@ header nav button{
 
 header nav button:hover{
   text-decoration: underline;
-  background: none;
 }
 
 .hero {
   width:calc(100% - 2*var(--section-margin));
-  margin:20px var(--section-margin);
+  margin:20px auto;
   display:flex;
-  align-items:flex-start;
-  justify-content:flex-start;
-  overflow:hidden;
-  background:black;
+  align-items:center;
+  justify-content:center;
+  background: var(--bg);
   border-radius:4px;
+  overflow:hidden;
 }
 
 pre.ascii {
@@ -90,7 +89,7 @@ pre.ascii {
   line-height:1;
   user-select:none;
   pointer-events:none;
-  border-radius:4px;
+  background: var(--bg);
 }
 
 .content {
@@ -197,13 +196,11 @@ footer button{
 
 footer button:hover{
   text-decoration: underline;
-  background: none;
 }
 
 @media (max-width:900px){
-  header nav{flex-direction:column; gap:8px; margin-top:0;}
+  header nav{flex-direction:column; gap:8px;}
   .intro{max-width:100%;}
-  .hero{width:calc(100% - 2*var(--section-margin));}
 }
 </style>
 </head>
@@ -230,26 +227,11 @@ footer button:hover{
 
   <aside class="projects-index">
     <h2>Selected Works</h2>
-    <div class="project-item">
-      <span class="number">01</span><h3>Digital Identity System</h3>
-      <div class="meta"><span>Branding</span><span>2024</span></div>
-    </div>
-    <div class="project-item">
-      <span class="number">02</span><h3>Minimalist Web App</h3>
-      <div class="meta"><span>UI/UX</span><span>2024</span></div>
-    </div>
-    <div class="project-item">
-      <span class="number">03</span><h3>Motion Graphics Reel</h3>
-      <div class="meta"><span>Animation</span><span>2023</span></div>
-    </div>
-    <div class="project-item">
-      <span class="number">04</span><h3>Publication Design</h3>
-      <div class="meta"><span>Print</span><span>2023</span></div>
-    </div>
-    <div class="project-item">
-      <span class="number">05</span><h3>E-commerce Platform</h3>
-      <div class="meta"><span>Development</span><span>2023</span></div>
-    </div>
+    <div class="project-item"><span class="number">01</span><h3>Digital Identity System</h3><div class="meta"><span>Branding</span><span>2024</span></div></div>
+    <div class="project-item"><span class="number">02</span><h3>Minimalist Web App</h3><div class="meta"><span>UI/UX</span><span>2024</span></div></div>
+    <div class="project-item"><span class="number">03</span><h3>Motion Graphics Reel</h3><div class="meta"><span>Animation</span><span>2023</span></div></div>
+    <div class="project-item"><span class="number">04</span><h3>Publication Design</h3><div class="meta"><span>Print</span><span>2023</span></div></div>
+    <div class="project-item"><span class="number">05</span><h3>E-commerce Platform</h3><div class="meta"><span>Development</span><span>2023</span></div></div>
   </aside>
 
   <footer>
@@ -270,36 +252,35 @@ let currentFrameIndex = 0;
 
 function clamp(v,a,b){ return Math.max(a, Math.min(b,v)); }
 
-// Load frames (frame_192.png → frame_290.png)
-function loadFrames(start=192, end=290) {
+function loadFrames(start=1, end=390) {
   const arr = [];
   for (let i=start; i<=end; i++) {
+    const num = String(i).padStart(3, '0'); // frame_001.png, frame_002.png...
     const img = new Image();
-    img.src = `frames/frame_${i}.png`;
+    img.src = `frames/frame_${num}.png`;
     arr.push(img);
   }
   return arr;
 }
-
 frames = loadFrames();
 
 function computeOutputSize() {
-    const margin = 20;
-    const W = window.innerWidth - 2*margin;
-    const H = window.innerHeight * 0.6;
-    hero.style.width = W + "px";
-    hero.style.height = H + "px";
-    hero.style.margin = margin + "px auto";
+  const margin = 20;
+  const W = window.innerWidth - 2*margin;
+  const H = window.innerHeight * 0.6;
 
-    const cols = Math.floor(W / 6); // more columns = more detail
-    const rows = Math.floor(H / 12);
+  hero.style.width = W + "px";
+  hero.style.height = H + "px";
 
-    off.width = cols;
-    off.height = rows;
+  const cols = Math.floor(W / 6);
+  const rows = Math.floor(H / 12);
 
-    const fontSize = Math.min(W / cols, H / rows);
-    asciiEl.style.fontSize = fontSize + "px";
-    asciiEl.style.lineHeight = fontSize * 0.9 + "px";
+  off.width = cols;
+  off.height = rows;
+
+  const fontSize = Math.min(W / cols, H / rows);
+  asciiEl.style.fontSize = fontSize + "px";
+  asciiEl.style.lineHeight = fontSize * 0.9 + "px";
 }
 
 function imageToASCII(img){
@@ -331,16 +312,15 @@ function advanceFrame(){
   renderFrame(currentFrameIndex);
 }
 
-// Auto-play loop at ~24fps (41ms per frame)
-setInterval(advanceFrame, 41);
+// Loop forever at ~12fps (82ms)
+setInterval(advanceFrame, 82);
 
 window.addEventListener('resize',()=>{ computeOutputSize(); renderFrame(currentFrameIndex); });
 computeOutputSize();
 renderFrame(0);
 
-// staggered fade-in for projects
-const projectItems = document.querySelectorAll('.project-item');
-projectItems.forEach((item,i)=>{
+// staggered fade-in
+document.querySelectorAll('.project-item').forEach((item,i)=>{
   item.style.animationDelay = `${i*0.15}s`;
 });
 </script>
