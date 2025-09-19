@@ -6,7 +6,7 @@ const RAMP = " .'`^\",:;Il!i~+_-?][}{1)(|\\\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW
 let frames = [];
 let currentFrameIndex = 0;
 const totalFrames = 480; // frame_001 to frame_480
-const frameRate = 41; // ms per frame
+const frameRate = 82; // updated frame rate ms per frame
 
 function clamp(v,a,b){ return Math.max(a, Math.min(b,v)); }
 
@@ -18,22 +18,36 @@ function computeOutputSize() {
   off.width = Math.floor(W / 4);
   off.height = Math.floor(H / 6);
 
-  asciiEl.style.fontSize = "8x";
+  asciiEl.style.fontSize = "8px"; // fixed typo "8x" -> "8px"
   asciiEl.style.lineHeight = "8px";
 
   return {W,H};
 }
 
+// Convert frames to black & white before ASCII conversion
 function imageToASCII(img){
   if(!img || !img.complete) return null;
   ctx.clearRect(0,0,off.width,off.height);
   ctx.drawImage(img,0,0,off.width,off.height);
-  const data = ctx.getImageData(0,0,off.width,off.height).data;
-  let out="";
+
+  const imageData = ctx.getImageData(0,0,off.width,off.height);
+  const data = imageData.data;
+
+  // convert to grayscale (black & white)
+  for(let i=0;i<data.length;i+=4){
+    const avg = 0.299*data[i] + 0.587*data[i+1] + 0.114*data[i+2];
+    data[i] = avg;      // R
+    data[i+1] = avg;    // G
+    data[i+2] = avg;    // B
+    // data[i+3] remains alpha
+  }
+  ctx.putImageData(imageData,0,0);
+
+  let out = "";
   for(let y=0;y<off.height;y++){
     for(let x=0;x<off.width;x++){
       const i = (y*off.width + x)*4;
-      const v = 0.299*data[i]+0.587*data[i+1]+0.114*data[i+2];
+      const v = data[i]; // already grayscale
       const ci = Math.floor((v/255)*(RAMP.length-1));
       out += RAMP[ci];
     }
@@ -57,7 +71,7 @@ function preloadFrames(){
   for(let i=1;i<=totalFrames;i++){
     const num = String(i).padStart(3,'0');
     const img = new Image();
-    img.src = `frames/frame_${num}.png`; // adjust path
+    img.src = `frames/frame_${num}.png`; // adjust path if needed
     frames.push(img);
   }
 }
@@ -65,7 +79,6 @@ function preloadFrames(){
 preloadFrames();
 computeOutputSize();
 renderFrame(0);
-
 setInterval(advanceFrame, frameRate);
 
 window.addEventListener('resize',()=>{ computeOutputSize(); renderFrame(currentFrameIndex); });
