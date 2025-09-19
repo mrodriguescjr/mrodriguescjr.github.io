@@ -5,17 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Marcelo Rodrigues Portfolio</title>
 <style>
+  :root {
+    --fg: #0f0; /* ASCII color */
+  }
+
   body {
     margin:0;
     font-family: Arial, sans-serif;
     background: #111;
     color: #ccc;
     overflow-y: auto;
+    padding-top: 70px; /* offset header */
   }
 
   header {
     position: fixed;
     top:0;
+    left:0;
     width:100%;
     background:#111;
     display:flex;
@@ -42,14 +48,22 @@
     margin:20px auto;
     display:flex;
     justify-content:center;
+    width: calc(100% - 40px);
+    height: auto;
   }
 
-  .ascii {
+  pre.ascii {
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
     white-space: pre;
-    font-family: monospace;
-    line-height: 1;
+    font-family: "Courier New", monospace;
+    color: var(--fg);
+    line-height:1;
+    user-select:none;
+    pointer-events:none;
     border-radius:4px;
-    color:#0f0;
   }
 
   section {
@@ -60,13 +74,15 @@
   .section-title {
     font-size:18px;
     text-transform: uppercase;
-    margin-bottom: 10px;
+    margin-bottom:10px;
+    text-align:left;
   }
 
   .about-text {
     font-size:16px;
     max-width:50%;
     color:#ccc;
+    margin-top:5px;
   }
 
   .projects-list {
@@ -79,7 +95,7 @@
     font-size:14px;
     line-height:48px;
     border-bottom:1px solid #555;
-    padding:0 0 0 5px;
+    padding-left:5px;
   }
 
   footer {
@@ -87,6 +103,7 @@
     gap:10px;
     padding:20px;
     justify-content:flex-start;
+    margin:20px;
   }
 
   footer button {
@@ -185,7 +202,7 @@ function resizeCanvas() {
 
   const fontSize = Math.max(18, canvasHeight / rows);
   asciiEl.style.fontSize = fontSize + "px";
-  asciiEl.style.lineHeight = fontSize*0.95 + "px";
+  asciiEl.style.lineHeight = fontSize + "px"; // keep line-height consistent
   asciiEl.style.borderRadius = "4px";
 }
 
