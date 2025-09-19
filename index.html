@@ -1,174 +1,325 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portfolio</title>
-  <style>
-    :root {
-      --bg: #0c0c0c;
-      --fg: #e0e0e0;
-      --accent: #00ffcc;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASCII Portfolio</title>
+<style>
+:root{
+  --bg:#0b0b0d;
+  --fg:#e6eef8;
+  --muted:#9aa7b8;
+  --primary:#78c7ff;
+  --section-margin:20px;
+}
 
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: "Courier New", monospace;
-      background: var(--bg);
-      color: var(--fg);
-    }
+* { box-sizing:border-box; }
 
-    header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      padding: 0 20px;
-      background: var(--bg);
-      z-index: 10;
-    }
+html, body {
+  margin:0;
+  padding:0;
+  width:100%;
+  min-height:100%;
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  overflow-y:auto;
+}
 
-    header .symbols {
-      font-size: 18px;
-      margin-right: auto;
-    }
+header.site-header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px var(--section-margin);
+  background:var(--bg);
+  font-size:16px;
+  z-index:10;
+}
 
-    header nav button {
-      background: none;
-      border: none;
-      color: var(--fg);
-      margin-left: 16px;
-      font-size: 14px;
-      cursor: pointer;
-      padding: 6px 12px;
-      border-radius: 6px;
-      transition: background 0.2s;
-    }
+header .symbols {
+  color: var(--fg);
+  font-size:18px;
+}
 
-    header nav button:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
+header nav{
+  display:flex;
+  gap:16px;
+}
 
-    main {
-      margin-top: 60px;
-      padding: 20px;
-    }
+header nav button{
+  font-family: Arial, sans-serif;
+  background:transparent;
+  border:none; 
+  color: var(--fg);
+  font-size:16px;
+  cursor:pointer;
+  padding:6px 10px;
+  border-radius:6px;
+  transition: all 0.2s ease;
+  outline:none;
+}
 
-    section {
-      margin-bottom: 40px;
-    }
+header nav button:hover{
+  text-decoration: underline;
+  background: none;
+}
 
-    .section-title {
-      font-size: 18px;
-      margin-bottom: 12px;
-    }
+.hero {
+  width:calc(100% - 2*var(--section-margin));
+  margin:20px auto;
+  display:flex;
+  align-items:flex-start;
+  justify-content:flex-start;
+  overflow:hidden;
+  background:var(--bg);
+  border-radius:4px;
+}
 
-    /* ASCII canvas container */
-    .ascii-container {
-      margin: 20px;
-      border-radius: 4px;
-      overflow: hidden;
-      position: relative;
-      width: calc(100% - 40px);
-      height: calc(100vh - 200px);
-      background: var(--bg);
-    }
+pre.ascii {
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  white-space:pre;
+  font-family: "Courier New", monospace;
+  color: var(--fg);
+  line-height:1;
+  user-select:none;
+  pointer-events:none;
+  border-radius:4px;
+  font-size:8px; /* smaller = more detail */
+}
 
-    .ascii-container img {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 100%;
-      height: 100%;
-      object-fit: cover; /* fills area without squishing */
-      transform: translate(-50%, -50%);
-    }
+.content {
+  display:flex;
+  flex-direction:column;
+  padding: var(--section-margin);
+  width:100%;
+  gap: var(--section-margin);
+}
 
-    footer {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      padding: 20px;
-      background: var(--bg);
-      position: relative;
-    }
+h2.section-title{
+  font-size:14px;
+  text-transform: uppercase;
+  letter-spacing:1px;
+  margin-bottom:0;
+  color: var(--muted);
+}
 
-    footer nav button {
-      background: none;
-      border: none;
-      color: var(--fg);
-      margin-right: 12px;
-      font-size: 12px;
-      cursor: pointer;
-      padding: 4px 8px;
-      border-radius: 6px;
-      transition: background 0.2s;
-    }
+.intro{
+  font-size:16px;
+  line-height:1.5;
+  max-width:50vw;
+  color: var(--muted);
+  margin-top:4px;
+}
 
-    footer nav button:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-  </style>
+.projects-index{
+  display:flex;
+  flex-direction:column;
+  width:100%;
+  gap:0;
+}
+
+.projects-index h2{
+  font-size:14px;
+  text-transform: uppercase;
+  letter-spacing:1px;
+  margin-bottom:16px;
+  color: var(--muted);
+}
+
+.project-item{
+  display:flex;
+  align-items:center;
+  height:48px;
+  cursor:pointer;
+  transition: color 0.2s ease;
+  border-bottom:1px solid var(--muted);
+  padding:0 0 8px 0;
+  opacity:0;
+  animation: fadeInItem 0.5s forwards;
+}
+
+.project-item:hover h3{
+  color: var(--primary);
+}
+
+@keyframes fadeInItem {
+  from { opacity:0; }
+  to { opacity:1; }
+}
+
+.project-item span.number{
+  display:inline-block;
+  width:2rem;
+  color: var(--muted);
+  margin-right:6px;
+  font-size:14px;
+}
+
+.project-item h3{
+  margin:0;
+  font-weight:normal;
+  font-size:14px;
+}
+
+.project-item .meta{
+  margin-left:auto;
+  display:flex;
+  gap:12px;
+  color: var(--muted);
+  font-size:14px;
+}
+
+footer{
+  display:flex;
+  justify-content:flex-start;
+  align-items:center;
+  padding:10px var(--section-margin);
+  gap:10px;
+}
+
+footer button{
+  font-family: Arial, sans-serif;
+  background:transparent;
+  border:none; 
+  color: var(--fg);
+  font-size:14px;
+  cursor:pointer;
+  padding:4px 8px;
+  border-radius:6px;
+  transition: all 0.2s ease;
+}
+
+footer button:hover{
+  text-decoration: underline;
+  background: none;
+}
+
+@media (max-width:900px){
+  header nav{flex-direction:column; gap:8px; margin-top:0;}
+  .intro{max-width:100%;}
+  .hero{width:calc(100% - 2*var(--section-margin));}
+}
+</style>
 </head>
 <body>
-  <header>
-    <div class="symbols">░ ▒ ▓ █</div>
-    <nav>
-      <button>About</button>
-      <button>Projects</button>
-    </nav>
-  </header>
 
-  <main>
-    <!-- ASCII Canvas -->
-    <div class="ascii-container">
-      <img id="asciiFrame" src="frames/frame_001.png" alt="ASCII Frame">
-    </div>
+<header class="site-header">
+  <span class="symbols">░ ▒ ▓ █</span>
+  <nav>
+    <button>About</button>
+    <button>Contact</button>
+  </nav>
+</header>
 
-    <!-- About -->
-    <section id="about">
-      <h2 class="section-title">Hi, my name is Marcelo Rodrigues</h2>
-      <p class="intro">
-        This is where you can put your about text.  
-        Later we’ll polish this part with better spacing and typography.
-      </p>
-    </section>
+<div class="hero" id="hero">
+  <pre class="ascii" id="ascii">Loading ASCII...</pre>
+  <canvas id="offscreen" style="display:none"></canvas>
+</div>
 
-    <!-- Projects -->
-    <section id="projects">
-      <h2 class="section-title">Projects</h2>
-      <ul>
-        <li>Project One</li>
-        <li>Project Two</li>
-      </ul>
-    </section>
-  </main>
+<div class="content">
+  <h2 class="section-title">Hi, my name is Marcelo Rodrigues</h2>
+  <div class="intro">
+    <p>I have been working as a Designer for over 10 years, helping companies transform ideas into user-centered experiences. Throughout my career, I have specialized in structuring flows, leading projects, and developing functional, visually appealing, and responsive interfaces.</p>
+  </div>
+
+  <aside class="projects-index">
+    <h2>Selected Works</h2>
+    <div class="project-item"><span class="number">01</span><h3>Digital Identity System</h3><div class="meta"><span>Branding</span><span>2024</span></div></div>
+    <div class="project-item"><span class="number">02</span><h3>Minimalist Web App</h3><div class="meta"><span>UI/UX</span><span>2024</span></div></div>
+    <div class="project-item"><span class="number">03</span><h3>Motion Graphics Reel</h3><div class="meta"><span>Animation</span><span>2023</span></div></div>
+    <div class="project-item"><span class="number">04</span><h3>Publication Design</h3><div class="meta"><span>Print</span><span>2023</span></div></div>
+    <div class="project-item"><span class="number">05</span><h3>E-commerce Platform</h3><div class="meta"><span>Development</span><span>2023</span></div></div>
+  </aside>
 
   <footer>
-    <nav>
-      <button>LinkedIn</button>
-      <button>Instagram</button>
-    </nav>
+    <button>LinkedIn</button>
+    <button>Instagram</button>
   </footer>
+</div>
 
-  <script>
-    const frameElement = document.getElementById("asciiFrame");
-    const totalFrames = 390; // updated frame count
-    let currentFrame = 1;
+<script>
+const asciiEl = document.getElementById('ascii');
+const off = document.getElementById('offscreen');
+const ctx = off.getContext('2d');
+const RAMP = " .'`^\",:;Il!i~+_-?][}{1)(|\\\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$";
 
-    function updateFrame() {
-      const frameNumber = String(currentFrame).padStart(3, "0");
-      frameElement.src = `frames/frame_${frameNumber}.png`;
-      currentFrame = (currentFrame % totalFrames) + 1;
+let frames = [];
+let currentFrameIndex = 0;
+const totalFrames = 390; // you said frame_001 to frame_390
+const frameRate = 82; // ms per frame
+
+function clamp(v,a,b){ return Math.max(a, Math.min(b,v)); }
+
+function computeOutputSize() {
+  const margin = 20;
+  const W = window.innerWidth - 2*margin;
+  const H = window.innerHeight * 0.6;
+
+  off.width = Math.floor(W / 8);
+  off.height = Math.floor(H / 12);
+
+  asciiEl.style.fontSize = "8px";
+  asciiEl.style.lineHeight = "8px";
+
+  return {W,H};
+}
+
+function imageToASCII(img){
+  if(!img || !img.complete) return null;
+  ctx.clearRect(0,0,off.width,off.height);
+  ctx.drawImage(img,0,0,off.width,off.height);
+  const data = ctx.getImageData(0,0,off.width,off.height).data;
+  let out="";
+  for(let y=0;y<off.height;y++){
+    for(let x=0;x<off.width;x++){
+      const i = (y*off.width + x)*4;
+      const v = 0.299*data[i]+0.587*data[i+1]+0.114*data[i+2];
+      const ci = Math.floor((v/255)*(RAMP.length-1));
+      out += RAMP[ci];
     }
+    out += "\n";
+  }
+  return out;
+}
 
-    // Change frame every 82ms
-    setInterval(updateFrame, 82);
-  </script>
+function renderFrame(idx){
+  idx = clamp(idx,0,frames.length-1);
+  const ascii = imageToASCII(frames[idx]);
+  if(ascii !== null) asciiEl.textContent = ascii;
+}
+
+function advanceFrame(){
+  currentFrameIndex = (currentFrameIndex + 1) % frames.length;
+  renderFrame(currentFrameIndex);
+}
+
+function preloadFrames(){
+  for(let i=1;i<=totalFrames;i++){
+    const num = String(i).padStart(3,'0');
+    const img = new Image();
+    img.src = `frames/frame_${num}.png`; // adjust path if needed
+    frames.push(img);
+  }
+}
+
+preloadFrames();
+computeOutputSize();
+renderFrame(0);
+
+setInterval(advanceFrame, frameRate);
+
+window.addEventListener('resize',()=>{ computeOutputSize(); renderFrame(currentFrameIndex); });
+
+// staggered fade-in for projects
+const projectItems = document.querySelectorAll('.project-item');
+projectItems.forEach((item,i)=> item.style.animationDelay = `${i*0.15}s`);
+</script>
 </body>
 </html>
