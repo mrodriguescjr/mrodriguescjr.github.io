@@ -270,21 +270,18 @@ let currentFrameIndex = 0;
 
 function clamp(v,a,b){ return Math.max(a, Math.min(b,v)); }
 
-const firstFrame = 192;
-const lastFrame = 290;
-
-// Load uploaded frames
-for(let i = firstFrame; i <= lastFrame; i++){
-  const img = new Image();
-  img.src = `frames/frame_${i}.png`; // make sure "frames" folder is next to index.html
-  frames.push(img);
+// Load frames (frame_192.png → frame_290.png)
+function loadFrames(start=192, end=290) {
+  const arr = [];
+  for (let i=start; i<=end; i++) {
+    const img = new Image();
+    img.src = `frames/frame_${i}.png`;
+    arr.push(img);
+  }
+  return arr;
 }
 
-Promise.all(frames.map(img => new Promise(res => img.onload = res)))
-  .then(() => {
-    computeOutputSize();
-    renderFrame(0);
-  });
+frames = loadFrames();
 
 function computeOutputSize() {
     const margin = 20;
@@ -294,14 +291,13 @@ function computeOutputSize() {
     hero.style.height = H + "px";
     hero.style.margin = margin + "px auto";
 
-    const charRatio = 0.6;
-    const cols = Math.floor(W / 7);  
-    const rows = Math.floor(H / (7 / charRatio));
+    const cols = Math.floor(W / 6); // more columns = more detail
+    const rows = Math.floor(H / 12);
+
     off.width = cols;
     off.height = rows;
 
-    // 🔽 smaller font size for higher resolution ASCII
-    const fontSize = Math.max(8, H / rows * 0.9);
+    const fontSize = Math.min(W / cols, H / rows);
     asciiEl.style.fontSize = fontSize + "px";
     asciiEl.style.lineHeight = fontSize * 0.9 + "px";
 }
@@ -330,16 +326,17 @@ function renderFrame(idx){
   if(ascii !== null) asciiEl.textContent = ascii;
 }
 
-// Mouse & touch interaction = frame change
 function advanceFrame(){
   currentFrameIndex = (currentFrameIndex + 1) % frames.length;
   renderFrame(currentFrameIndex);
 }
 
-document.addEventListener('mousemove', advanceFrame);
-document.addEventListener('touchmove', advanceFrame, {passive:true});
+// Auto-play loop at ~24fps (41ms per frame)
+setInterval(advanceFrame, 41);
 
 window.addEventListener('resize',()=>{ computeOutputSize(); renderFrame(currentFrameIndex); });
+computeOutputSize();
+renderFrame(0);
 
 // staggered fade-in for projects
 const projectItems = document.querySelectorAll('.project-item');
@@ -349,4 +346,3 @@ projectItems.forEach((item,i)=>{
 </script>
 </body>
 </html>
-
