@@ -295,13 +295,15 @@ function computeOutputSize() {
     hero.style.margin = margin + "px auto";
 
     const charRatio = 0.6;
-    const cols = Math.floor(W / 7);
+    const cols = Math.floor(W / 7);  
     const rows = Math.floor(H / (7 / charRatio));
     off.width = cols;
     off.height = rows;
-    const fontSize = Math.max(18, H / rows);
+
+    // 🔽 smaller font size for higher resolution ASCII
+    const fontSize = Math.max(8, H / rows * 0.9);
     asciiEl.style.fontSize = fontSize + "px";
-    asciiEl.style.lineHeight = fontSize * 0.95 + "px";
+    asciiEl.style.lineHeight = fontSize * 0.9 + "px";
 }
 
 function imageToASCII(img){
@@ -347,3 +349,4 @@ projectItems.forEach((item,i)=>{
 </script>
 </body>
 </html>
+
