@@ -1,7 +1,7 @@
 const asciiEl = document.getElementById('ascii');
 const off = document.getElementById('offscreen');
 const ctx = off.getContext('2d');
-const RAMP = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,'\"^`'.";
+const RAMP = "@#W$9876543210?!abc;:+=-,._";
 
 let frames = [];
 let currentFrameIndex = 0;
