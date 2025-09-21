@@ -3,27 +3,34 @@ const off = document.getElementById('offscreen');
 const ctx = off.getContext('2d');
 
 const RAMP = "$@#%*+=-:. `'";
-
 let frames = [];
 let currentFrameIndex = 0;
-const totalFrames = 972;
+const totalFrames = 890;
 let frameRate = 41.67; // ~24fps
 
 const SETTINGS = { gamma: 0.9, contrast: 1.2, brightness: 0 };
 
 function clamp(v,a,b){ return Math.max(a, Math.min(b,v)); }
 
-function computeOutputSize() {
+// ==========================
+// Ajuste do canvas para o container (.ascii-wrapper)
+// ==========================
+function resizeCanvas() {
   const wrapper = document.querySelector('.ascii-wrapper');
   const rect = wrapper.getBoundingClientRect();
 
+  // Ajusta o canvas para a largura e altura real do wrapper
   off.width = Math.max(2, Math.floor(rect.width / 4));
   off.height = Math.max(2, Math.floor(rect.height / 6));
 
+  // Ajusta o <pre> para ocupar o espaço do wrapper
   asciiEl.style.width = rect.width + "px";
   asciiEl.style.height = rect.height + "px";
 }
 
+// ==========================
+// Funções de processamento de ASCII
+// ==========================
 function adjustLuminance(v) {
   let n = v / 255;
   if (SETTINGS.gamma !== 1.0 && SETTINGS.gamma > 0) n = Math.pow(n, SETTINGS.gamma);
@@ -55,6 +62,10 @@ function imageToASCII(img){
 
 function renderFrame(idx){
   idx = clamp(idx,0,frames.length-1);
+
+  // Atualiza tamanho do canvas antes de renderizar
+  resizeCanvas();
+
   const ascii = imageToASCII(frames[idx]);
   if(ascii !== null) asciiEl.textContent = ascii;
 }
@@ -73,17 +84,21 @@ function preloadFrames(){
   }
 }
 
+// ==========================
+// Inicialização
+// ==========================
 preloadFrames();
-computeOutputSize();
 renderFrame(0);
 setInterval(advanceFrame, frameRate);
 
-window.addEventListener('resize',()=>{
-  computeOutputSize();
+// Redimensiona ao mudar o tamanho da janela
+window.addEventListener('resize', ()=>{
   renderFrame(currentFrameIndex);
 });
 
+// ==========================
 // fade-in do header e do conteúdo
+// ==========================
 window.addEventListener('DOMContentLoaded', () => {
   const header = document.querySelector('header.site-header');
   header.style.opacity = 0;
@@ -116,7 +131,9 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// ==========================
 // Footer datetime
+// ==========================
 function updateDateTime(){
   const now = new Date();
   document.getElementById("datetime").textContent = now.toLocaleString();

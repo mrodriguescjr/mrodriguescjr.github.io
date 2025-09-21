@@ -63,7 +63,7 @@ pre.ascii {
   height:100%;
   white-space:pre;
   font-family: "Courier New", monospace;
-  color: #969aa0; /* softer than fg */
+  color: #969aa0;
   line-height:1;
   user-select:none;
   pointer-events:none;
@@ -92,19 +92,21 @@ header nav{
   gap:12px;
 }
 
-header nav button{
+/* ================= HEADER NAV LINKS ================= */
+header nav a {
   font-family: Arial, sans-serif;
-  background:transparent;
-  border:none; 
+  background: transparent;
+  border: none;
   color: var(--fg);
-  font-size:14px;
-  cursor:pointer;
-  padding:6px 10px;
-  border-radius:6px;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  text-decoration: none;
   transition: all 0.2s ease;
 }
 
-header nav button:hover{
+header nav a:hover {
   text-decoration: underline;
 }
 
@@ -202,17 +204,76 @@ footer.footer-bar{
   to { opacity:1; transform: translateY(0); }
 }
 
+/* ========== AJUSTES PARA LINKS DO LOGO E PROJETOS ========== */
+a.no-link,
+a.no-link:link,
+a.no-link:visited {
+  color: inherit !important;
+  text-decoration: none !important;
+}
+
+a.project-link {
+  display: block;
+  width: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+
+a.project-link .project-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+a.project-link:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* ========== MEDIA QUERY MOBILE ========== */
 @media (max-width:900px){
+  /* Hero ajustado para mobile */
   .hero {
-    flex-direction:column-reverse;
+    flex-direction: column-reverse;
+    width: 100vw;       
+    margin: 0;          
+    gap: var(--section-margin);
+    padding: 0;         
+    height: auto;       
   }
-  .hero .info, .hero .ascii-wrapper {
-    flex:1 1 auto;
-    width:100%;
+
+  /* Coluna de conteúdo ocupa toda largura */
+  .hero .info {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 var(--section-margin);
   }
+
+  /* ASCII wrapper */
+  .hero .ascii-wrapper {
+    flex: 1 1 auto;
+    width: 100%;        
+    max-width: 100%;    
+    min-height: 200px;  
+    max-height: 60vh;   
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 var(--section-margin); 
+    box-sizing: border-box;
+  }
+
+  /* Header e footer */
   header.site-header,
-  footer.footer-bar{
-    width: calc(100% - 2*var(--section-margin));
-    left: var(--section-margin);
+  footer.footer-bar {
+    width: 100%;
+    left: 0;
+    position: relative;  /* evita colar no bottom */
+  }
+
+  /* Footer spacing */
+  footer.footer-bar {
+    margin-top: var(--section-margin);
+    margin-bottom: 12px;  /* respiro inferior no mobile */
   }
 }
