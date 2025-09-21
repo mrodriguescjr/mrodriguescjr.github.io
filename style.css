@@ -254,7 +254,7 @@ a.project-link:focus-visible {
     flex: 1 1 auto;
     width: 100%;
     max-width: 100%;
-    min-height: 200px;  
+    min-height: 390px;  
     max-height: 70vh;   /* increased from 60vh to 80vh */
     display: flex;
     align-items: center;
