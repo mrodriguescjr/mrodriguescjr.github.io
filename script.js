@@ -1,39 +1,27 @@
 const asciiEl = document.getElementById('ascii');
 const off = document.getElementById('offscreen');
-const ctx = off.getContext("2d", {
-  willReadFrequently: true,
-  alpha: true,
-  desynchronized: false,
-  colorSpace: "srgb"
-});
+const ctx = off.getContext('2d');
 
 const RAMP = "$@#%*+=-:. `'";
 let frames = [];
+let asciiCache = [];
 let currentFrameIndex = 0;
 const totalFrames = 991;
-let frameRate = 1000 / 24; // ~24 fps
+let frameRate = 41.67; // ~24fps
 
 const SETTINGS = { gamma: 0.9, contrast: 1.2, brightness: 0 };
 
 function clamp(v,a,b){ return Math.max(a, Math.min(b,v)); }
 
-// ==========================
-// Ajuste do canvas para o container (.ascii-wrapper)
-// ==========================
 function resizeCanvas() {
   const wrapper = document.querySelector('.ascii-wrapper');
   const rect = wrapper.getBoundingClientRect();
-
   off.width = Math.max(2, Math.floor(rect.width / 4));
   off.height = Math.max(2, Math.floor(rect.height / 6));
-
   asciiEl.style.width = rect.width + "px";
   asciiEl.style.height = rect.height + "px";
 }
 
-// ==========================
-// Funções de processamento de ASCII
-// ==========================
 function adjustLuminance(v) {
   let n = v / 255;
   if (SETTINGS.gamma !== 1.0 && SETTINGS.gamma > 0) n = Math.pow(n, SETTINGS.gamma);
@@ -43,12 +31,16 @@ function adjustLuminance(v) {
 }
 
 function imageToASCII(img){
-  if (!img || !img.complete || img.naturalWidth === 0) return null;
+  if(!img || !img.complete) return null;
+
+  // se já tiver no cache, retorna
+  const idx = frames.indexOf(img);
+  if(asciiCache[idx]) return asciiCache[idx];
 
   ctx.clearRect(0,0,off.width,off.height);
   ctx.drawImage(img, 0, 0, off.width, off.height);
-
   const raw = ctx.getImageData(0,0,off.width,off.height).data;
+
   let out = "";
   for (let y = 0; y < off.height; y++) {
     for (let x = 0; x < off.width; x++) {
@@ -60,60 +52,64 @@ function imageToASCII(img){
     }
     out += "\n";
   }
+
+  asciiCache[idx] = out;
   return out;
 }
 
 function renderFrame(idx){
   idx = clamp(idx,0,frames.length-1);
-  const ascii = imageToASCII(frames[idx]);
-  if(ascii !== null) asciiEl.textContent = ascii;
-}
+  resizeCanvas();
 
-// ==========================
-// Controle de frames
-// ==========================
-function loadFrame(i){
-  if (i < 0 || i >= totalFrames) return;
-  if (!frames[i]) {
-    const img = new Image();
-    img.src = `frames/frame_${String(i+1).padStart(3,'0')}.png`;
-    frames[i] = img;
+  const ascii = imageToASCII(frames[idx]);
+  if(ascii !== null) {
+    asciiEl.textContent = ascii;
+  } else if(idx > 0 && asciiCache[idx-1]) {
+    // fallback: repetir último frame válido
+    asciiEl.textContent = asciiCache[idx-1];
   }
 }
 
 function advanceFrame(){
-  currentFrameIndex = (currentFrameIndex+1) % totalFrames;
-  loadFrame(currentFrameIndex+1); // pré-carrega o próximo
+  if (!frames.length) return;
+  currentFrameIndex = (currentFrameIndex+1) % frames.length;
   renderFrame(currentFrameIndex);
+}
+
+function preloadFramesBatch(start, batchSize = 30){
+  const end = Math.min(start + batchSize, totalFrames);
+  for (let i = start; i < end; i++) {
+    if (!frames[i]) {
+      const img = new Image();
+      img.src = `frames/frame_${String(i+1).padStart(3,'0')}.png`;
+      frames[i] = img;
+    }
+  }
 }
 
 // ==========================
 // Inicialização
 // ==========================
-resizeCanvas();
-loadFrame(0);
-loadFrame(1);
-frames[0].onload = () => renderFrame(0);
 
-// Loop com requestAnimationFrame
-let lastTime = 0;
-function loop(ts){
-  if(ts - lastTime > frameRate){
-    advanceFrame();
-    lastTime = ts;
-  }
-  requestAnimationFrame(loop);
-}
-requestAnimationFrame(loop);
+// Preload inicial: quantos frames cabem em 2s?
+const framesPer2s = Math.floor(2000 / frameRate);
+preloadFramesBatch(0, framesPer2s);
 
-// Redimensiona ao mudar o tamanho da janela
-window.addEventListener('resize', ()=>{
-  resizeCanvas();
-  renderFrame(currentFrameIndex);
-});
+// Loop da animação
+setInterval(advanceFrame, frameRate);
+
+// Preload contínuo em batches de 30
+let preloadIndex = framesPer2s;
+const preloadInterval = setInterval(() => {
+  preloadFramesBatch(preloadIndex, 30);
+  preloadIndex += 30;
+  if (preloadIndex >= totalFrames) clearInterval(preloadInterval);
+}, 1000);
+
+window.addEventListener('resize', ()=>{ renderFrame(currentFrameIndex); });
 
 // ==========================
-// fade-in do header e do conteúdo
+// fade-in do header e conteúdo
 // ==========================
 window.addEventListener('DOMContentLoaded', () => {
   const header = document.querySelector('header.site-header');
@@ -124,7 +120,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
   const contentItems = document.querySelectorAll('.content-main > *');
   let delay = 0.3;
-
   contentItems.forEach(el => {
     el.style.opacity = 0;
     el.style.transform = 'translateY(20px)';
@@ -142,7 +137,6 @@ window.addEventListener('DOMContentLoaded', () => {
         pd += 0.08;
       });
     }
-
     delay += 0.1;
   });
 });
