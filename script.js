@@ -4,8 +4,7 @@ const ctx = off.getContext("2d", {
   willReadFrequently: true,
   alpha: true,
   desynchronized: false,
-  colorSpace: "srgb",
-  colorType: "uint8"
+  colorSpace: "srgb"
 });
 
 const RAMP = "$@#%*+=-:. `'";
