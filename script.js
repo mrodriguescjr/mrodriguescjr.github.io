@@ -1,6 +1,6 @@
 const asciiEl = document.getElementById('ascii');
 const off = document.getElementById('offscreen');
-const ctx = off.getContext('2d');
+const ctx = off.getContext('2d', { willReadFrequently: true });
 
 const RAMP = "$@#%*+=-:. `'";
 let frames = [];
