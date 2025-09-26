@@ -1,13 +1,15 @@
 // script.js
-import { frames } from './frames.js'; // importar frames já em ASCII
 
 const asciiEl = document.getElementById('ascii');
 const off = document.getElementById('offscreen');
-const ctx = off.getContext('2d'); // ainda mantido se quiser futuras manipulações
+const ctx = off.getContext('2d', { willReadFrequently: true });
 
+const RAMP = "$@#%*+=-:. `'"; // ainda mantido para referência se quiser ajustes visuais
+const frames = window.framesASCII || [];
 let currentFrameIndex = 0;
-const totalFrames = frames.length;
-let frameRate = 41.67; // ~24fps
+const frameRate = 41.67; // ~24fps
+
+function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
 
 // ==========================
 // Ajuste do canvas para o container (.ascii-wrapper)
@@ -24,55 +26,58 @@ function resizeCanvas() {
 }
 
 // ==========================
-// Renderização do frame atual
+// Renderiza frame ASCII
 // ==========================
-function renderFrame(idx){
-  idx = Math.min(Math.max(idx, 0), frames.length - 1);
-
+function renderFrame(idx) {
+  idx = clamp(idx, 0, frames.length - 1);
   resizeCanvas();
 
-  const ascii = frames[idx];
-  if(ascii !== null) asciiEl.textContent = ascii;
+  const ascii = frames[idx] || frames[0] || 'Loading ASCII...';
+  asciiEl.textContent = ascii;
 }
 
-function advanceFrame(){
+function advanceFrame() {
   if (!frames.length) return;
-  currentFrameIndex = (currentFrameIndex+1) % frames.length;
+  currentFrameIndex = (currentFrameIndex + 1) % frames.length;
   renderFrame(currentFrameIndex);
 }
 
 // ==========================
-// Inicialização da animação
-// ==========================
-renderFrame(0);
-setInterval(advanceFrame, frameRate);
-
-// Redimensiona ao mudar o tamanho da janela
-window.addEventListener('resize', ()=>{
-  renderFrame(currentFrameIndex);
-});
-
-// ==========================
-// fade-in do header e do conteúdo
+// Inicialização
 // ==========================
 window.addEventListener('DOMContentLoaded', () => {
+  renderFrame(0);
+  setInterval(advanceFrame, frameRate);
+
+  // Redimensiona ao mudar o tamanho da janela
+  window.addEventListener('resize', () => {
+    renderFrame(currentFrameIndex);
+  });
+
+  // fade-in do header e conteúdo
   const header = document.querySelector('header.site-header');
-  header.classList.add('fade-in-up');
+  header.style.opacity = 0;
+  header.style.transform = 'translateY(-20px)';
+  header.style.animation = `fadeInUp 0.6s forwards`;
   header.style.animationDelay = '0.1s';
 
   const contentItems = document.querySelectorAll('.content-main > *');
-  let delay = 0.3; // conteúdo começa após header
+  let delay = 0.3;
 
-  contentItems.forEach((el, i) => {
-    el.classList.add('fade-in-up');
+  contentItems.forEach(el => {
+    el.style.opacity = 0;
+    el.style.transform = 'translateY(20px)';
+    el.style.animation = `fadeInUp 0.6s forwards`;
     el.style.animationDelay = `${delay}s`;
 
-    if(el.classList.contains('projects-index')){
+    if (el.classList.contains('projects-index')) {
       const projects = el.querySelectorAll('.project-item');
       let pd = 0.2;
-      projects.forEach(p=>{
-        p.classList.add('fade-in-up');
-        p.style.animationDelay = `${delay+pd}s`;
+      projects.forEach(p => {
+        p.style.opacity = 0;
+        p.style.transform = 'translateY(20px)';
+        p.style.animation = `fadeInUp 0.5s forwards`;
+        p.style.animationDelay = `${delay + pd}s`;
         pd += 0.08;
       });
     }
@@ -84,9 +89,9 @@ window.addEventListener('DOMContentLoaded', () => {
 // ==========================
 // Footer datetime
 // ==========================
-function updateDateTime(){
+function updateDateTime() {
   const now = new Date();
   document.getElementById("datetime").textContent = now.toLocaleString();
 }
-setInterval(updateDateTime,1000);
+setInterval(updateDateTime, 1000);
 updateDateTime();

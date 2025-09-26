@@ -5,7 +5,7 @@ const Jimp = require('jimp');
 
 const framesDir = path.join(__dirname, '../frames'); // pasta dos PNGs
 const outputFile = path.join(__dirname, '../frames.js'); // arquivo gerado
-const RAMP = "$@#%*+=-:. `'";
+const RAMP = "$@#%*+=-:. `'"; // ASCII ramp
 const scaleX = 0.25; // igual ao canvas /4
 const scaleY = 0.1667; // igual ao canvas /6
 
@@ -19,7 +19,7 @@ async function imageToASCII(filePath) {
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
       const { r, g, b } = Jimp.intToRGBA(image.getPixelColor(x, y));
-      const lum = 0.299*r + 0.587*g + 0.114*b;
+      const lum = 0.299 * r + 0.587 * g + 0.114 * b;
       const idx = Math.floor((lum / 255) * (RAMP.length - 1));
       ascii += RAMP[idx];
     }
@@ -31,16 +31,16 @@ async function imageToASCII(filePath) {
 async function generate() {
   const files = fs.readdirSync(framesDir)
     .filter(f => f.endsWith('.png'))
-    .sort(); // garante ordem
+    .sort();
 
   const framesArray = [];
   for (const file of files) {
     process.stdout.write(`Processing ${file}...\r`);
     const ascii = await imageToASCII(path.join(framesDir, file));
-    framesArray.push(ascii.replace(/\`/g,'\\`')); // escapar crase
+    framesArray.push(ascii.replace(/\`/g, '\\`')); // escapar crase
   }
 
-  const fileContent = `export const frames = [\n` +
+  const fileContent = `window.framesASCII = [\n` +
     framesArray.map(f => `\`${f}\``).join(',\n') +
     `\n];\n`;
 
