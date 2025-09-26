@@ -5,7 +5,7 @@ const ctx = off.getContext('2d');
 const RAMP = "$@#%*+=-:. `'";
 let frames = [];
 let currentFrameIndex = 0;
-const totalFrames = 890;
+const totalFrames = 991;
 let frameRate = 41.67; // ~24fps
 
 const SETTINGS = { gamma: 0.9, contrast: 1.2, brightness: 0 };
