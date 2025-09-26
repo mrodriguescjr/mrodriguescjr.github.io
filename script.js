@@ -1,12 +1,18 @@
 const asciiEl = document.getElementById('ascii');
 const off = document.getElementById('offscreen');
-const ctx = off.getContext('2d');
+const ctx = off.getContext("2d", {
+  willReadFrequently: true,
+  alpha: true,
+  desynchronized: false,
+  colorSpace: "srgb",
+  colorType: "uint8"
+});
 
 const RAMP = "$@#%*+=-:. `'";
 let frames = [];
 let currentFrameIndex = 0;
 const totalFrames = 991;
-let frameRate = 41.67; // ~24fps
+let frameRate = 1000 / 24; // ~24 fps
 
 const SETTINGS = { gamma: 0.9, contrast: 1.2, brightness: 0 };
 
@@ -19,11 +25,9 @@ function resizeCanvas() {
   const wrapper = document.querySelector('.ascii-wrapper');
   const rect = wrapper.getBoundingClientRect();
 
-  // Ajusta o canvas para a largura e altura real do wrapper
   off.width = Math.max(2, Math.floor(rect.width / 4));
   off.height = Math.max(2, Math.floor(rect.height / 6));
 
-  // Ajusta o <pre> para ocupar o espaço do wrapper
   asciiEl.style.width = rect.width + "px";
   asciiEl.style.height = rect.height + "px";
 }
@@ -40,7 +44,7 @@ function adjustLuminance(v) {
 }
 
 function imageToASCII(img){
-  if(!img || !img.complete) return null;
+  if (!img || !img.complete || img.naturalWidth === 0) return null;
 
   ctx.clearRect(0,0,off.width,off.height);
   ctx.drawImage(img, 0, 0, off.width, off.height);
@@ -62,37 +66,50 @@ function imageToASCII(img){
 
 function renderFrame(idx){
   idx = clamp(idx,0,frames.length-1);
-
-  // Atualiza tamanho do canvas antes de renderizar
-  resizeCanvas();
-
   const ascii = imageToASCII(frames[idx]);
   if(ascii !== null) asciiEl.textContent = ascii;
 }
 
-function advanceFrame(){
-  if (!frames.length) return;
-  currentFrameIndex = (currentFrameIndex+1) % frames.length;
-  renderFrame(currentFrameIndex);
+// ==========================
+// Controle de frames
+// ==========================
+function loadFrame(i){
+  if (i < 0 || i >= totalFrames) return;
+  if (!frames[i]) {
+    const img = new Image();
+    img.src = `frames/frame_${String(i+1).padStart(3,'0')}.png`;
+    frames[i] = img;
+  }
 }
 
-function preloadFrames(){
-  for(let i=1;i<=totalFrames;i++){
-    const img = new Image();
-    img.src = `frames/frame_${String(i).padStart(3,'0')}.png`;
-    frames.push(img);
-  }
+function advanceFrame(){
+  currentFrameIndex = (currentFrameIndex+1) % totalFrames;
+  loadFrame(currentFrameIndex+1); // pré-carrega o próximo
+  renderFrame(currentFrameIndex);
 }
 
 // ==========================
 // Inicialização
 // ==========================
-preloadFrames();
-renderFrame(0);
-setInterval(advanceFrame, frameRate);
+resizeCanvas();
+loadFrame(0);
+loadFrame(1);
+frames[0].onload = () => renderFrame(0);
+
+// Loop com requestAnimationFrame
+let lastTime = 0;
+function loop(ts){
+  if(ts - lastTime > frameRate){
+    advanceFrame();
+    lastTime = ts;
+  }
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
 
 // Redimensiona ao mudar o tamanho da janela
 window.addEventListener('resize', ()=>{
+  resizeCanvas();
   renderFrame(currentFrameIndex);
 });
 
@@ -107,7 +124,7 @@ window.addEventListener('DOMContentLoaded', () => {
   header.style.animationDelay = '0.1s';
 
   const contentItems = document.querySelectorAll('.content-main > *');
-  let delay = 0.3; // conteúdo começa após header
+  let delay = 0.3;
 
   contentItems.forEach(el => {
     el.style.opacity = 0;
